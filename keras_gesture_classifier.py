@@ -113,7 +113,8 @@ class GestureClassifier:
             )
         
         features = self.landmarks_to_features(landmarks)
-        predictions = self.model.predict(features, verbose=0)
+        # Use direct model call for better performance on single predictions
+        predictions = self.model(features, training=False)
         
         # Get the predicted class and confidence
         predicted_class = np.argmax(predictions[0])
