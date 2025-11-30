@@ -4,6 +4,10 @@ import mediapipe as mp
 import pyautogui
 import time
 
+print("All imports successful!")
+print(f"OpenCV version: {cv2.__version__}")
+print(f"MediaPipe version: {mp.__version__}")
+
 drawing_utils = mp.solutions.drawing_utils
 hands_module = mp.solutions.hands
 
@@ -19,12 +23,25 @@ ACTION_COOLDOWN = 2
 # Holds the last time a button was clicked
 last_action_time = time.time()
 
-capture = cv2.VideoCapture(0)
+print("Initializing camera...")
+capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # Use DirectShow for Windows
+
+# Check if camera opened successfully
+if not capture.isOpened():
+    print("ERROR: Could not open camera!")
+    print("Please check:")
+    print("1. Camera is connected")
+    print("2. Camera permissions are granted")
+    print("3. No other application is using the camera")
+    exit(1)
+
+print("Camera opened successfully!")
 
 # Video input's screen dimentions
 if capture.isOpened():
     width = capture.get(cv2.CAP_PROP_FRAME_WIDTH)  # float `width`
     height = capture.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
+    print(f"Camera resolution: {width}x{height}")
 
 # Devices screen dimentions
 screen_width, screen_height = pyautogui.size()
@@ -118,8 +135,14 @@ def detect_gestures(landmarks):
 with hands_module.Hands(
     min_detection_confidence=0.8, min_tracking_confidence=0.5
 ) as hands:
+    print("Hand detection initialized. Press 'q' in the video window to quit.")
     while capture.isOpened():
         read_success, frame = capture.read()
+        
+        if not read_success:
+            print("ERROR: Failed to read frame from camera")
+            break
+            
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image = cv2.flip(image, 1)
         image.flags.writeable = False
