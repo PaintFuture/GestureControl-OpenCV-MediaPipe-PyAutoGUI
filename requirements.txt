@@ -1,0 +1,8 @@
+# Core dependencies
+opencv-python>=4.5.0
+mediapipe>=0.10.0
+pyautogui>=0.9.50
+numpy>=1.19.0
+
+# For Keras-based gesture classification (optional, required for keras_gesture_control.py)
+tensorflow>=2.10.0
